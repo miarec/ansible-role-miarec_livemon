@@ -1,0 +1,103 @@
+---
+- name: Create release directory
+  file:
+    path: '{{ deploy_helper.new_release_path }}'
+    state: directory
+    mode: u=rwX,g=rX,o=rX
+
+# --------------------------------------------------
+# Download and extract files into .../releases/{version} folder
+# --------------------------------------------------
+
+- name: Verify miarec_livemon binary presense
+  stat:
+    path: "{{ deploy_helper.new_release_path }}/miarec_livemon"
+  register: miarec_livemon_bin_exists
+
+
+- name: Add an unfinished file, to allow cleanup on successful finalize
+  file:
+    path: '{{ deploy_helper.new_release_path }}/{{ deploy_helper.unfinished_filename }}'
+    state: touch
+  when: miarec_livemon_bin_exists.stat.exists == False
+
+
+- name: Download tarbal
+  get_url:
+    url: "{{ miarec_livemon_download_base_url }}/{{ miarec_livemon_tarball_file }}"
+    dest: "{{ miarec_livemon_download_dir }}/{{ miarec_livemon_tarball_file }}"
+  when: miarec_livemon_bin_exists.stat.exists == False
+
+
+- name: Untar the source package
+  unarchive:
+    src: "{{ miarec_livemon_download_dir }}/{{ miarec_livemon_tarball_file }}"
+    dest: "{{ miarec_livemon_download_dir }}/"
+    creates: "{{ miarec_livemon_download_dir }}/miarec_livemon-{{ miarec_livemon_version }}/miarec_livemon"
+    copy: no
+    mode: u=rwX,g=rX,o=rX
+  when: miarec_livemon_bin_exists.stat.exists == False
+
+
+- name: Move the application files to releases folder
+  shell: "mv {{ miarec_livemon_download_dir }}/miarec_livemon-{{ miarec_livemon_version}}/* {{ deploy_helper.new_release_path }}/"
+  when: miarec_livemon_bin_exists.stat.exists == False
+
+
+# --------------------------------------------------
+# Create required directory
+# --------------------------------------------------
+- name: Create working directory for the application
+  file:
+    path: '{{ miarec_livemon_work_dir }}'
+    owner: '{{ miarec_livemon_bin_user }}'
+    group: '{{ miarec_livemon_bin_group }}'
+    state: directory
+
+- name: Create log directories for miarec
+  file:
+    path: '{{ item }}'
+    owner: '{{ miarec_livemon_bin_user }}'
+    group: '{{ miarec_livemon_bin_group }}'
+    state: directory
+  with_items:
+    - '{{ miarec_livemon_log_dir }}'
+
+
+# --------------------------------------------------
+# Install service
+# --------------------------------------------------
+- fail:
+    msg: "Only SystemD systems are supported at the moment"
+  when: ansible_service_mgr != "systemd"
+
+
+- name: Install miarec_livemon service | systemd
+  template:
+    src: "etc_systemd_system_miarec_livemon.service.j2"
+    dest: "/etc/systemd/system/miarec_livemon.service"
+    owner: root
+    group: root
+    mode: 0644
+  notify: start miarec_livemon
+
+
+- name: Enable miarec_livemon service | systemd or upstart
+  service: 
+    name: miarec_livemon
+    enabled: yes
+
+# Important! do not start the service right now. Postpone it until deploy_helper creates symbolic link to new release folder.
+
+# --------------------------------------------------
+# Cleanup
+# --------------------------------------------------
+- name: Clean up the downloaded files
+  file: 
+    path: '{{ item }}'
+    state: absent
+  with_items:
+    - "{{ miarec_livemon_download_dir }}/{{ miarec_livemon_tarball_file }}"
+    - "{{ miarec_livemon_download_dir }}/{{ miarec_livemon_tarball_file }}.asc"
+  when: miarec_livemon_cleanup_downloads|bool
+

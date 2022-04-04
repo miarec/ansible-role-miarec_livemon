@@ -1,0 +1,59 @@
+---
+## Version of MiaRec LiveMon to install
+miarec_livemon_version: 1.2.3.4
+
+miarec_livemon_rest_api_port: 6087
+
+miarec_livemon_bin_user: root
+miarec_livemon_bin_group: root
+miarec_livemon_bin_umask: "0002"
+
+
+# ------------------------------------
+# Installation folder structure:
+# ------------------------------------
+#   root:
+#      releases:
+#          - 1.0.0.100
+#          - 2.0.1.200
+#          - 3.1.2.5
+#      shared:
+#          - data1
+#          - data2
+#      current: -> releases/3.1.2.5
+#
+# The 'releases' folder holds all the available releases. During a deploy, a new folder should be created in the releases folder.
+# The 'current' symlink points to one of the releases (usually, the latest one)
+# The 'shared' folder holds any resource that is shared between releases.
+#
+# Base installation directory for the application
+miarec_livemon_install_dir: /opt/miarec_livemon
+
+
+# The working directory for the application.
+# MiaRec stores some temporary files here.
+# Also, in case of application crash, the core dump files are created here.
+miarec_livemon_work_dir: /opt/miarec_livemon/shared
+
+# Location for log files
+# This could be the 'shared' folder, but recommended location is /var/log
+# because usually /opt and /var are located on different disk partitions.
+miarec_livemon_log_dir: /var/log/miarec_livemon
+
+
+miarec_livemon_download_base_url: "https://miarec-download.s3.amazonaws.com"
+miarec_livemon_tarball_file: "miarec_livemon-{{ miarec_livemon_version }}-linux-amd64.tar.gz"
+  
+# Directory where to download miarec files
+miarec_livemon_download_dir: /tmp
+
+# whether or not to delete the downloaded files. By setting it
+# to false and using a custom var for `miarec_livemon_download_dir` a kind of
+# local caching can be achieved.
+miarec_livemon_cleanup_downloads: yes
+
+
+
+
+
+
