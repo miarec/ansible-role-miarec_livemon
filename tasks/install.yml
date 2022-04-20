@@ -63,6 +63,36 @@
   with_items:
     - '{{ miarec_livemon_log_dir }}'
 
+# --------------------------------------------------
+# When using root group, then the configuration file must have permissions:
+#   - read-only access for other users,
+#     which includes Apache service (httpd:httpd)
+# --------------------------------------------------
+- name: Configure file permissions on productio.ini file (no "miarec" group)
+  file:
+    path: "{{ deploy_helper.new_release_path }}/production.ini"
+    mode: u=rwX,g=rX,o=rX
+  when: miarec_bin_group == 'root'
+
+# --------------------------------------------------
+# Configuration file production.ini
+# It must have permissions:
+#   - read-only access for group "miarec"
+#   - no access for other users
+# --------------------------------------------------
+- name: Configure production.ini file
+  lineinfile:
+    dest: "{{ deploy_helper.new_release_path }}/production.ini"
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  with_items:
+    - regexp: '^port = '
+      line: 'port = {{ miarec_livemon_rest_api_port }}'
+    - regexp: '^log_file = '
+      line: 'log_file = {{ miarec_livemon_log_dir }}'
+
+  notify:
+    - reload miarec_livemon
 
 # --------------------------------------------------
 # Install service
