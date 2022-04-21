@@ -72,7 +72,7 @@
   file:
     path: "{{ deploy_helper.new_release_path }}/production.ini"
     mode: u=rwX,g=rX,o=rX
-  when: miarec_bin_group == 'root'
+  when: miarec_livemon_bin_group == 'root'
 
 # --------------------------------------------------
 # Configuration file production.ini
