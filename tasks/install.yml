@@ -65,8 +65,7 @@
 
 # --------------------------------------------------
 # When using root group, then the configuration file must have permissions:
-#   - read-only access for other users,
-#     which includes Apache service (httpd:httpd)
+#   - read-only access for other users
 # --------------------------------------------------
 - name: Configure file permissions on productio.ini file (no "miarec" group)
   file:
@@ -76,9 +75,6 @@
 
 # --------------------------------------------------
 # Configuration file production.ini
-# It must have permissions:
-#   - read-only access for group "miarec"
-#   - no access for other users
 # --------------------------------------------------
 - name: Configure production.ini file
   lineinfile:
@@ -89,7 +85,7 @@
     - regexp: '^port = '
       line: 'port = {{ miarec_livemon_rest_api_port }}'
     - regexp: '^log_file = '
-      line: 'log_file = {{ miarec_livemon_log_dir }}'
+      line: 'log_file = {{ miarec_livemon_log_dir }}/livemon.log'
 
   notify:
     - reload miarec_livemon
