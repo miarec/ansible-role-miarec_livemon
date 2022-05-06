@@ -10,3 +10,9 @@
     name: miarec_livemon
     state: started
   become: true
+
+- name: reload miarec_livemon
+  service: 
+    name: miarec_livemon
+    state: restarted
+  become: true
