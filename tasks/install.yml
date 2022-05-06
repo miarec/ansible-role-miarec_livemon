@@ -64,16 +64,6 @@
     - '{{ miarec_livemon_log_dir }}'
 
 # --------------------------------------------------
-# When using root group, then the configuration file must have permissions:
-#   - read-only access for other users
-# --------------------------------------------------
-- name: Configure file permissions on miarec_livemon.ini file (no "miarec" group)
-  file:
-    path: "{{ deploy_helper.new_release_path }}/miarec_livemon.ini"
-    mode: u=rwX,g=rX,o=rX
-  when: miarec_livemon_bin_group == 'root'
-
-# --------------------------------------------------
 # Configuration file miarec_livemon.ini
 # --------------------------------------------------
 - name: Configure miarec_livemon.ini file
