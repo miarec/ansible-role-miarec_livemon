@@ -67,18 +67,18 @@
 # When using root group, then the configuration file must have permissions:
 #   - read-only access for other users
 # --------------------------------------------------
-- name: Configure file permissions on productio.ini file (no "miarec" group)
+- name: Configure file permissions on miarec_livemon.ini file (no "miarec" group)
   file:
-    path: "{{ deploy_helper.new_release_path }}/production.ini"
+    path: "{{ deploy_helper.new_release_path }}/miarec_livemon.ini"
     mode: u=rwX,g=rX,o=rX
   when: miarec_livemon_bin_group == 'root'
 
 # --------------------------------------------------
-# Configuration file production.ini
+# Configuration file miarec_livemon.ini
 # --------------------------------------------------
-- name: Configure production.ini file
+- name: Configure miarec_livemon.ini file
   lineinfile:
-    dest: "{{ deploy_helper.new_release_path }}/production.ini"
+    dest: "{{ deploy_helper.new_release_path }}/miarec_livemon.ini"
     regexp: "{{ item.regexp }}"
     line: "{{ item.line }}"
   with_items:
