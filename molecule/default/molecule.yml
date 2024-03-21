@@ -19,8 +19,8 @@ provisioner:
     MIAREC_LIVEMON_VERSION: ${MOLECULE_MIAREC_LIVEMON_VERSION:-"0.1.0.183"}
   playbooks:
     converge: ${MOLECULE_PLAYBOOK:-converge.yml}
-# verifier:
-#   name: testinfra
-#   options:
-#     s: true
-#     verbose: true
+verifier:
+  name: testinfra
+  options:
+    s: true
+    verbose: true
