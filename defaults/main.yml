@@ -43,17 +43,11 @@ miarec_livemon_log_dir: /var/log/miarec_livemon
 
 miarec_livemon_download_base_url: "https://miarec-download.s3.amazonaws.com"
 miarec_livemon_tarball_file: "miarec_livemon-{{ miarec_livemon_version }}-linux-amd64.tar.gz"
-  
+
 # Directory where to download miarec files
 miarec_livemon_download_dir: /tmp
 
 # whether or not to delete the downloaded files. By setting it
 # to false and using a custom var for `miarec_livemon_download_dir` a kind of
 # local caching can be achieved.
-miarec_livemon_cleanup_downloads: yes
-
-
-
-
-
-
+miarec_livemon_cleanup_downloads: true
