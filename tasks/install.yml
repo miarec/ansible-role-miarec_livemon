@@ -36,7 +36,6 @@
     dest: "{{ miarec_livemon_download_dir }}/"
     creates: "{{ miarec_livemon_download_dir }}/miarec_livemon-{{ miarec_livemon_version }}/miarec_livemon"
     copy: false
-    mode: u=rwX,g=rX,o=rX
   when: not miarec_livemon_bin_exists.stat.exists
 
 
