@@ -1,0 +1,13 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+  vars:
+    miarec_livemon_version: "{{ lookup('env', 'MIAREC_LIVEMON_VERSION') }}"
+
+  pre_tasks:
+
+  roles:
+    - role: ansible-role-miarec_livemon
+      tags:
+        - miarec_livemon

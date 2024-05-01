@@ -14,7 +14,7 @@
     group: "{{ miarec_livemon_bin_group }}"
     comment: "MiaRec"
     shell: /bin/false
-    system: yes
+    system: true
   when: miarec_livemon_bin_user != 'root'
 
 # --------------------------------------------------
@@ -30,7 +30,8 @@
 # --------------------------------------------------
 # Install/upgrade 'miarec' app files
 # --------------------------------------------------
-- import_tasks: install.yml
+- name: Install miarec_livemon
+  import_tasks: install.yml
   become: true
 
 # --------------------------------------------------
@@ -42,6 +43,6 @@
     release: '{{ deploy_helper.new_release }}'
     state: finalize
     keep_releases: 10
-  notify: 
-    - restart miarec_livemon
+  notify:
+    - Restart miarec_livemon
   become: true

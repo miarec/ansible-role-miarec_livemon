@@ -1,4 +1,5 @@
 # ansible-role-miarec-livemon
+![CI](https://github.com/miarec/ansible-role-miarec_livemon/actions/workflows/ci.yml/badge.svg?event=push)
 
 Ansible role for installing of MiaRec Live Monitoring server application.
 
@@ -22,7 +23,7 @@ eg:
       become: yes
       roles:
         - role: ansible-role-miarec_livemon
-          miarec_livemon_version: 1.1.0.11 
+          miarec_livemon_version: 1.1.0.11
 ```
 
 The above playbook will install miarec_livemon version 1.1.0.11.

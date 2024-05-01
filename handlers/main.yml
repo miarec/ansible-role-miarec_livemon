@@ -1,18 +1,18 @@
 ---
-- name: restart miarec_livemon
-  service: 
+- name: Restart miarec_livemon
+  service:
     name: miarec_livemon
     state: restarted
   become: true
 
-- name: start miarec_livemon
-  service: 
+- name: Start miarec_livemon
+  service:
     name: miarec_livemon
     state: started
   become: true
 
-- name: reload miarec_livemon
-  service: 
+- name: Reload miarec_livemon
+  service:
     name: miarec_livemon
     state: restarted
   become: true
