@@ -15,7 +15,7 @@
   register: miarec_livemon_bin_exists
 
 
-- name: Download and Untar source package
+- name: Download and Extract source package
   when: not miarec_livemon_bin_exists.stat.exists
   block:
 
