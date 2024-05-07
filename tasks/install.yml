@@ -38,7 +38,7 @@
     # This step will create a direcoty specific to this role to extract files to
     - name: Create directory for extracted files
       file:
-        path: "{{ miarec_livemon_download_dir }}/miarec_livemon-{{ miarec_livemon_version }}"
+        path: "{{ miarec_livemon_download_dir }}/miarec_livemon"
         state: directory
         mode: u=rwX,g=rX,o=rX
       register: _extract_dir
