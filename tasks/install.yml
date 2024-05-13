@@ -15,35 +15,46 @@
   register: miarec_livemon_bin_exists
 
 
-- name: Add an unfinished file, to allow cleanup on successful finalize
-  file:
-    path: '{{ deploy_helper.new_release_path }}/{{ deploy_helper.unfinished_filename }}'
-    state: touch
-    mode: "0644"
+- name: Download and Extract source package
   when: not miarec_livemon_bin_exists.stat.exists
+  block:
 
-- name: Download tarball
-  get_url:
-    url: "{{ miarec_livemon_download_base_url }}/{{ miarec_livemon_tarball_file }}"
-    dest: "{{ miarec_livemon_download_dir }}/{{ miarec_livemon_tarball_file }}"
-    mode: "0644"
-  when: not miarec_livemon_bin_exists.stat.exists
+    - name: Add an unfinished file, to allow cleanup on successful finalize
+      file:
+        path: '{{ deploy_helper.new_release_path }}/{{ deploy_helper.unfinished_filename }}'
+        state: touch
+        mode: "0644"
 
+    - name: Download tarball
+      get_url:
+        url: "{{ miarec_livemon_download_base_url }}/{{ miarec_livemon_tarball_file }}"
+        dest: "{{ miarec_livemon_download_dir }}/{{ miarec_livemon_tarball_file }}"
+        mode: "0644"
 
-- name: Untar the source package
-  unarchive:
-    src: "{{ miarec_livemon_download_dir }}/{{ miarec_livemon_tarball_file }}"
-    dest: "{{ miarec_livemon_download_dir }}/"
-    creates: "{{ miarec_livemon_download_dir }}/miarec_livemon-{{ miarec_livemon_version }}/miarec_livemon"
-    copy: false
-  when: not miarec_livemon_bin_exists.stat.exists
+    # unarchive must change the permissions of the destination folder when mode parameter is supplied.
+    # But it behaves differently with tar.gz and zip archives.
+    # When extracting tar.gz, it doesn't touch the destination folder's permissions.
+    # While in case of extracting zip into something like /tmp/ with mode: 755, it overrides the permissions of /tmp to 755.
+    # This step will create a direcoty specific to this role to extract files to
+    - name: Create directory for extracted files
+      file:
+        path: "{{ miarec_livemon_download_dir }}/miarec_livemon"
+        state: directory
+        mode: u=rwX,g=rX,o=rX
+      register: _extract_dir
 
+    - name: Untar the source package
+      unarchive:
+        src: "{{ miarec_livemon_download_dir }}/{{ miarec_livemon_tarball_file }}"
+        dest: "{{ _extract_dir.path }}"
+        creates: "{{ _extract_dir.path }}/miarec_livemon-{{ miarec_livemon_version }}/miarec_livemon"
+        copy: false
+        mode: u=rwX,g=rX,o=rX
 
-- name: Move the application files to releases folder
-  shell: "mv {{ miarec_livemon_download_dir }}/miarec_livemon-{{ miarec_livemon_version }}/* {{ deploy_helper.new_release_path }}/"
-  args:
-    creates: "{{ deploy_helper.new_release_path }}/miarec_livemon"
-  when: not miarec_livemon_bin_exists.stat.exists
+    - name: Move the application files to releases folder
+      shell: "mv {{ _extract_dir.path }}/miarec_livemon-{{ miarec_livemon_version }}/* {{ deploy_helper.new_release_path }}/"
+      args:
+        creates: "{{ deploy_helper.new_release_path }}/miarec_livemon"
 
 # --------------------------------------------------
 # Create required directory
